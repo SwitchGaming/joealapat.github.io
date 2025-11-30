@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joe Alapat | Mechanical Engineering Portfolio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js for 3D STL Viewing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+</head>
+<body>
+    <!-- Welcome Modal for First-Time Visitors -->
+    <div class="sw-welcome-modal" id="welcomeModal">
+        <div class="sw-welcome-content">
+            <div class="sw-welcome-header">
+                <i class="fas fa-drafting-compass"></i>
+                <h2>Welcome to My Portfolio</h2>
+            </div>
+            <p>This portfolio is styled like <strong>SolidWorks</strong>, the CAD software I use daily as a Mechanical Engineer.</p>
+            <div class="sw-welcome-tips">
+                <div class="sw-tip">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <span>Click the <strong>tabs above</strong> or <strong>sidebar items</strong> to navigate</span>
+                </div>
+                <div class="sw-tip">
+                    <i class="fas fa-palette"></i>
+                    <span>Click the <strong>palette icon</strong> to change color themes</span>
+                </div>
+                <div class="sw-tip">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                    <span>Click items with <strong>arrows</strong> to expand/collapse details</span>
+                </div>
+            </div>
+            <button class="sw-welcome-btn" id="closeWelcome">
+                <i class="fas fa-check"></i> Got it, let's go!
+            </button>
+            <label class="sw-welcome-checkbox">
+                <input type="checkbox" id="dontShowAgain">
+                <span>Don't show this again</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- SolidWorks Title Bar -->
+    <header class="sw-titlebar">
+        <div class="sw-titlebar-left">
+            <div class="sw-logo-container">
+                <span class="sw-logo-text">SOLIDWORKS</span>
+                <span class="sw-logo-subtitle">themed portfolio</span>
+            </div>
+        </div>
+        <div class="sw-titlebar-right">
+            <button class="sw-help-btn" id="helpBtn" title="Show Navigation Help">
+                <i class="fas fa-question-circle"></i>
+            </button>
+            <button class="sw-theme-btn" id="themeToggle" title="Change Color Theme">
+                <i class="fas fa-palette"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="sw-commandmanager">
+        <div class="sw-tabs">
+            <button class="sw-tab active" data-section="home"><i class="fas fa-home"></i> <span>Home</span></button>
+            <button class="sw-tab" data-section="about"><i class="fas fa-user"></i> <span>About</span></button>
+            <button class="sw-tab" data-section="experience"><i class="fas fa-briefcase"></i> <span>Experience</span></button>
+            <button class="sw-tab" data-section="projects"><i class="fas fa-rocket"></i> <span>Projects</span></button>
+            <button class="sw-tab" data-section="models"><i class="fas fa-cube"></i> <span>3D Models</span></button>
+            <button class="sw-tab" data-section="skills"><i class="fas fa-tools"></i> <span>Skills</span></button>
+            <button class="sw-tab" data-section="contact"><i class="fas fa-envelope"></i> <span>Contact</span></button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="sw-main">
+        <!-- Sidebar Navigation -->
+        <aside class="sw-featuremanager">
+            <div class="sw-tree">
+                <div class="sw-tree-header">
+                    <i class="fas fa-folder-open sw-icon-assembly"></i>
+                    <span>Portfolio Contents</span>
+                </div>
+                
+                <!-- Navigation Tree -->
+                <ul class="sw-tree-list">
+                    <li class="sw-tree-item">
+                        <div class="sw-tree-node" data-section="home">
+                            <i class="fas fa-home sw-icon-origin"></i>
+                            <span>Home</span>
+                        </div>
+                    </li>
+                    
+                    <li class="sw-tree-item expanded">
+                        <div class="sw-tree-node" data-section="about">
+                            <i class="fas fa-chevron-down sw-tree-toggle"></i>
+                            <i class="fas fa-user-circle sw-icon-part"></i>
+                            <span>About Me</span>
+                        </div>
+                        <ul class="sw-tree-children">
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="about">
+                                    <i class="fas fa-graduation-cap sw-icon-feature"></i>
+                                    <span>Education</span>
+                                </div>
+                            </li>
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="about">
+                                    <i class="fas fa-award sw-icon-feature"></i>
+                                    <span>Recognition</span>
+                                </div>
+                            </li>
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="about">
+                                    <i class="fas fa-flask sw-icon-feature"></i>
+                                    <span>Research</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li class="sw-tree-item expanded">
+                        <div class="sw-tree-node" data-section="experience">
+                            <i class="fas fa-chevron-down sw-tree-toggle"></i>
+                            <i class="fas fa-briefcase sw-icon-folder"></i>
+                            <span>Work Experience</span>
+                        </div>
+                        <ul class="sw-tree-children">
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="experience" data-exp="thermal">
+                                    <i class="fas fa-fire-alt sw-icon-part-blue"></i>
+                                    <span>Thermal Research</span>
+                                </div>
+                            </li>
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="experience" data-exp="rains">
+                                    <i class="fas fa-microscope sw-icon-part-blue"></i>
+                                    <span>RAINS Fellowship</span>
+                                </div>
+                            </li>
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="experience" data-exp="judge">
+                                    <i class="fas fa-gavel sw-icon-part-green"></i>
+                                    <span>CONRAD Judge</span>
+                                </div>
+                            </li>
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="experience" data-exp="scholar">
+                                    <i class="fas fa-trophy sw-icon-part-green"></i>
+                                    <span>STEM Scholar</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li class="sw-tree-item expanded">
+                        <div class="sw-tree-node" data-section="projects">
+                            <i class="fas fa-chevron-down sw-tree-toggle"></i>
+                            <i class="fas fa-rocket sw-icon-folder"></i>
+                            <span>Projects</span>
+                        </div>
+                        <ul class="sw-tree-children">
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="projects">
+                                    <i class="fas fa-car sw-icon-part"></i>
+                                    <span>Autonomous RC Car</span>
+                                </div>
+                            </li>
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="projects">
+                                    <i class="fas fa-parking sw-icon-part"></i>
+                                    <span>Parking Sensor</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li class="sw-tree-item">
+                        <div class="sw-tree-node" data-section="models">
+                            <i class="fas fa-cube sw-icon-assembly"></i>
+                            <span>3D Models</span>
+                        </div>
+                    </li>
+                    
+                    <li class="sw-tree-item expanded">
+                        <div class="sw-tree-node" data-section="skills">
+                            <i class="fas fa-chevron-down sw-tree-toggle"></i>
+                            <i class="fas fa-toolbox sw-icon-folder"></i>
+                            <span>Skills</span>
+                        </div>
+                        <ul class="sw-tree-children">
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="skills">
+                                    <i class="fas fa-code sw-icon-feature"></i>
+                                    <span>Technical Skills</span>
+                                </div>
+                            </li>
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="skills">
+                                    <i class="fas fa-book sw-icon-feature"></i>
+                                    <span>Coursework</span>
+                                </div>
+                            </li>
+                            <li class="sw-tree-item">
+                                <div class="sw-tree-node" data-section="skills">
+                                    <i class="fas fa-users sw-icon-feature"></i>
+                                    <span>Clubs</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li class="sw-tree-item">
+                        <div class="sw-tree-node" data-section="contact">
+                            <i class="fas fa-address-card sw-icon-part"></i>
+                            <span>Contact Me</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Resize Handle -->
+            <div class="sw-panel-resize"></div>
+        </aside>
+
+        <!-- Graphics Area (Main Viewport) -->
+        <main class="sw-viewport">
+
+            <!-- Section: Home/Assembly View -->
+            <section id="home" class="sw-section active">
+                <div class="sw-3d-viewport">
+                    <div class="sw-model-display">
+                        <div class="sw-hero-content">
+                            <div class="sw-dimension-line top"></div>
+                            <div class="sw-dimension-line side"></div>
+                            
+                            <div class="sw-model-info">
+                                <h1 class="sw-model-name">JOE ALAPAT</h1>
+                                <div class="sw-model-description">
+                                    <span class="sw-property-label">Description:</span>
+                                    <span class="sw-property-value">Mechanical Engineering Student</span>
+                                </div>
+                                <div class="sw-model-properties">
+                                    <div class="sw-property">
+                                        <span class="sw-property-label">Institution:</span>
+                                        <span class="sw-property-value">Loyola Marymount University</span>
+                                    </div>
+                                    <div class="sw-property">
+                                        <span class="sw-property-label">Class:</span>
+                                        <span class="sw-property-value">2027 (Spring)</span>
+                                    </div>
+                                    <div class="sw-property">
+                                        <span class="sw-property-label">Status:</span>
+                                        <span class="sw-property-value sw-status-active">● Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-cta-buttons">
+                                <button class="sw-cta-btn primary" onclick="document.querySelector('[data-section=contact]').click()">
+                                    <i class="fas fa-envelope"></i> Contact Me
+                                </button>
+                                <button class="sw-cta-btn secondary" onclick="document.querySelector('[data-section=experience]').click()">
+                                    <i class="fas fa-briefcase"></i> View Experience
+                                </button>
+                            </div>
+                            
+                            <div class="sw-coordinate-system">
+                                <div class="sw-axis sw-axis-x">X</div>
+                                <div class="sw-axis sw-axis-y">Y</div>
+                                <div class="sw-axis sw-axis-z">Z</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: About -->
+            <section id="about" class="sw-section">
+                <div class="sw-property-panel">
+                    <div class="sw-property-header">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Part Properties - About_Me.SLDPRT</span>
+                    </div>
+                    
+                    <div class="sw-property-content">
+                        <div class="sw-property-group">
+                            <div class="sw-property-group-header">
+                                <i class="fas fa-chevron-down"></i>
+                                Summary
+                            </div>
+                            <div class="sw-property-group-content">
+                                <p class="sw-summary-text">
+                                    Mechanical Engineering Junior at <strong>Loyola Marymount University</strong> with hands-on experience in 
+                                    thermal management, cooling systems, and test engineering.
+                                </p>
+                                <p class="sw-summary-text">
+                                    Skilled in CAD (SolidWorks), multi-channel data acquisition, instrumentation, and fluid systems. 
+                                    Experienced in designing prototypes, thermal rigs, and IoT sensor hardware configuration and validation.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="sw-property-group">
+                            <div class="sw-property-group-header">
+                                <i class="fas fa-chevron-down"></i>
+                                Custom Properties
+                            </div>
+                            <div class="sw-property-table">
+                                <div class="sw-property-row header">
+                                    <span>Property Name</span>
+                                    <span>Value</span>
+                                </div>
+                                <div class="sw-property-row">
+                                    <span>Name</span>
+                                    <span>Joe Alapat</span>
+                                </div>
+                                <div class="sw-property-row">
+                                    <span>Email</span>
+                                    <span>jalapat@lion.lmu.edu</span>
+                                </div>
+                                <div class="sw-property-row">
+                                    <span>Phone</span>
+                                    <span>+1 (310) 714-7230</span>
+                                </div>
+                                <div class="sw-property-row">
+                                    <span>University</span>
+                                    <span>Loyola Marymount University</span>
+                                </div>
+                                <div class="sw-property-row">
+                                    <span>Major</span>
+                                    <span>Mechanical Engineering</span>
+                                </div>
+                                <div class="sw-property-row">
+                                    <span>Expected Graduation</span>
+                                    <span>Spring 2027</span>
+                                </div>
+                                <div class="sw-property-row">
+                                    <span>Location</span>
+                                    <span>Los Angeles, CA</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sw-property-group">
+                            <div class="sw-property-group-header">
+                                <i class="fas fa-chevron-down"></i>
+                                Key Highlights
+                            </div>
+                            <div class="sw-highlights-grid">
+                                <div class="sw-highlight-card">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <h4>Education</h4>
+                                    <p>B.S. Mechanical Engineering, LMU '27</p>
+                                </div>
+                                <div class="sw-highlight-card">
+                                    <i class="fas fa-award"></i>
+                                    <h4>Recognition</h4>
+                                    <p>CONRAD Challenge Winner</p>
+                                </div>
+                                <div class="sw-highlight-card">
+                                    <i class="fas fa-flask"></i>
+                                    <h4>Research</h4>
+                                    <p>RAINS Undergraduate Fellow</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Experience (Assembly Tree Style) -->
+            <section id="experience" class="sw-section">
+                <div class="sw-assembly-view">
+                    <div class="sw-assembly-header">
+                        <i class="fas fa-sitemap"></i>
+                        <span>Bill of Materials - Experience_Assembly</span>
+                    </div>
+                    
+                    <div class="sw-bom-table">
+                        <div class="sw-bom-header">
+                            <span class="sw-bom-col-icon"></span>
+                            <span class="sw-bom-col-name">Component Name</span>
+                            <span class="sw-bom-col-date">Date Range</span>
+                            <span class="sw-bom-col-status">Status</span>
+                        </div>
+                        
+                        <!-- Experience Item 1 -->
+                        <div class="sw-bom-item expanded" data-detail="thermal">
+                            <div class="sw-bom-row">
+                                <span class="sw-bom-col-icon">
+                                    <i class="fas fa-chevron-down sw-tree-toggle"></i>
+                                    <i class="fas fa-cube sw-icon-part-blue"></i>
+                                </span>
+                                <span class="sw-bom-col-name">Thermal_Research.SLDPRT</span>
+                                <span class="sw-bom-col-date">Jan 2025 - Present</span>
+                                <span class="sw-bom-col-status"><span class="sw-status-badge active">Active</span></span>
+                            </div>
+                            <div class="sw-bom-detail">
+                                <div class="sw-detail-title">
+                                    <strong>Advanced Research - Thermal Management and Fluid Systems</strong>
+                                    <span class="sw-detail-role">Research Team Lead</span>
+                                </div>
+                                <ul class="sw-detail-features">
+                                    <li><i class="fas fa-check-circle"></i> Currently leading a research team to investigate spray-based liquid cooling strategies for thermal management of electronics and battery systems.</li>
+                                    <li><i class="fas fa-check-circle"></i> Designed and prototyped a custom data acquisition system to replace commercial LabJack hardware, enabling high-resolution, low-noise measurement from 13+ Type-K thermocouples.</li>
+                                    <li><i class="fas fa-check-circle"></i> Developed and validated MATLAB analysis pipelines for sensor calibration, transient heat transfer modeling, and spatial temperature mapping.</li>
+                                    <li><i class="fas fa-check-circle"></i> Designed and fabricated a 1/5-scale experimental housing for spray cooling tests with water recirculation features.</li>
+                                    <li><i class="fas fa-check-circle"></i> Integrated a 12V solenoid valve with precision DC power supply to automate pumping and control flow rate.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Experience Item 2 -->
+                        <div class="sw-bom-item" data-detail="rains">
+                            <div class="sw-bom-row">
+                                <span class="sw-bom-col-icon">
+                                    <i class="fas fa-chevron-right sw-tree-toggle"></i>
+                                    <i class="fas fa-cube sw-icon-part-blue"></i>
+                                </span>
+                                <span class="sw-bom-col-name">RAINS_Fellowship.SLDPRT</span>
+                                <span class="sw-bom-col-date">May 2024 - Jun 2024</span>
+                                <span class="sw-bom-col-status"><span class="sw-status-badge completed">Completed</span></span>
+                            </div>
+                            <div class="sw-bom-detail">
+                                <div class="sw-detail-title">
+                                    <strong>RAINS Undergraduate Research Fellow</strong>
+                                    <span class="sw-detail-role">Research Fellow</span>
+                                </div>
+                                <ul class="sw-detail-features">
+                                    <li><i class="fas fa-check-circle"></i> Used MATLAB to analyze data collected from LabView (Data acquisition hardware) by generating 3D heat-maps of the experiment.</li>
+                                    <li><i class="fas fa-check-circle"></i> Presented research and findings at a research symposium at the end of a six week program.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Experience Item 3 -->
+                        <div class="sw-bom-item" data-detail="judge">
+                            <div class="sw-bom-row">
+                                <span class="sw-bom-col-icon">
+                                    <i class="fas fa-chevron-right sw-tree-toggle"></i>
+                                    <i class="fas fa-cube sw-icon-part-green"></i>
+                                </span>
+                                <span class="sw-bom-col-name">CONRAD_Judge.SLDPRT</span>
+                                <span class="sw-bom-col-date">Jan 2024 - Feb 2024</span>
+                                <span class="sw-bom-col-status"><span class="sw-status-badge completed">Completed</span></span>
+                            </div>
+                            <div class="sw-bom-detail">
+                                <div class="sw-detail-title">
+                                    <strong>Global Judge - Aerospace & Aviation</strong>
+                                    <span class="sw-detail-role">The CONRAD Challenge, NASA Space Center Houston</span>
+                                </div>
+                                <ul class="sw-detail-features">
+                                    <li><i class="fas fa-check-circle"></i> Invited to be an Innovation Summit Judge for the Global CONRAD Challenge in the Aviation and Aerospace sector.</li>
+                                    <li><i class="fas fa-check-circle"></i> Coached and mentored 4 different global teams providing key insights and feedback for their respective project proposals.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Experience Item 4 -->
+                        <div class="sw-bom-item" data-detail="scholar">
+                            <div class="sw-bom-row">
+                                <span class="sw-bom-col-icon">
+                                    <i class="fas fa-chevron-right sw-tree-toggle"></i>
+                                    <i class="fas fa-cube sw-icon-part-green"></i>
+                                </span>
+                                <span class="sw-bom-col-name">STEM_Scholar.SLDPRT</span>
+                                <span class="sw-bom-col-date">Sep 2021 - Jul 2023</span>
+                                <span class="sw-bom-col-status"><span class="sw-status-badge completed">Completed</span></span>
+                            </div>
+                            <div class="sw-bom-detail">
+                                <div class="sw-detail-title">
+                                    <strong>Globally Recognized STEM Scholar</strong>
+                                    <span class="sw-detail-role">The CONRAD Challenge, NASA Space Center Houston</span>
+                                </div>
+                                <ul class="sw-detail-features">
+                                    <li><i class="fas fa-check-circle"></i> Collaborated on three operational prototypes for a hand-strapped navigation device for the visually impaired.</li>
+                                    <li><i class="fas fa-check-circle"></i> Utilized a LiDAR sensor, microprocessor and an adjustable audio output to convey distance measurements to a user.</li>
+                                    <li><i class="fas fa-check-circle"></i> Led a team (out of 130+ teams) to win the CONRAD challenge in our category.</li>
+                                    <li><i class="fas fa-check-circle"></i> Secured a provisional patent for the device in India.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Projects -->
+            <section id="projects" class="sw-section">
+                <div class="sw-design-table">
+                    <div class="sw-design-table-header">
+                        <i class="fas fa-th"></i>
+                        <span>Design Table - Current_Projects</span>
+                    </div>
+                    
+                    <div class="sw-project-cards">
+                        <!-- Project 1 -->
+                        <div class="sw-project-card">
+                            <div class="sw-project-header">
+                                <div class="sw-project-icon">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div class="sw-project-title">
+                                    <h3>Autonomous_RC_Car.SLDASM</h3>
+                                    <span class="sw-file-type">Assembly Document</span>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-project-preview">
+                                <div class="sw-preview-placeholder">
+                                    <i class="fas fa-cube"></i>
+                                    <span>3D Preview</span>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-project-specs">
+                                <div class="sw-spec-row">
+                                    <span class="sw-spec-label">Description:</span>
+                                    <span class="sw-spec-value">1/10th scale RC car with Raspberry Pi, camera, and LiDAR for autonomous navigation</span>
+                                </div>
+                                <div class="sw-spec-row">
+                                    <span class="sw-spec-label">Components:</span>
+                                    <span class="sw-spec-value">Raspberry Pi, Camera Module, LiDAR Sensor</span>
+                                </div>
+                                <div class="sw-spec-row">
+                                    <span class="sw-spec-label">Software:</span>
+                                    <span class="sw-spec-value">Python, ROS2</span>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-project-features">
+                                <div class="sw-feature-tag">Raspberry Pi</div>
+                                <div class="sw-feature-tag">Python</div>
+                                <div class="sw-feature-tag">ROS2</div>
+                                <div class="sw-feature-tag">LiDAR</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Project 2 -->
+                        <div class="sw-project-card">
+                            <div class="sw-project-header">
+                                <div class="sw-project-icon">
+                                    <i class="fas fa-parking"></i>
+                                </div>
+                                <div class="sw-project-title">
+                                    <h3>Parking_Sensor.SLDASM</h3>
+                                    <span class="sw-file-type">Assembly Document</span>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-project-preview">
+                                <div class="sw-preview-placeholder">
+                                    <i class="fas fa-cube"></i>
+                                    <span>3D Preview</span>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-project-specs">
+                                <div class="sw-spec-row">
+                                    <span class="sw-spec-label">Description:</span>
+                                    <span class="sw-spec-value">Campus Startup - RF-based sensors for real-time parking space monitoring</span>
+                                </div>
+                                <div class="sw-spec-row">
+                                    <span class="sw-spec-label">Components:</span>
+                                    <span class="sw-spec-value">ESP32, RF Sensors, Custom PCB</span>
+                                </div>
+                                <div class="sw-spec-row">
+                                    <span class="sw-spec-label">CAD Work:</span>
+                                    <span class="sw-spec-value">KiCad circuits, SolidWorks enclosures</span>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-project-features">
+                                <div class="sw-feature-tag">ESP32</div>
+                                <div class="sw-feature-tag">KiCad</div>
+                                <div class="sw-feature-tag">SolidWorks</div>
+                                <div class="sw-feature-tag">RF Sensors</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: 3D Models -->
+            <section id="models" class="sw-section">
+                <div class="sw-model-viewer-panel">
+                    <div class="sw-model-header">
+                        <i class="fas fa-cube"></i>
+                        <span>3D Model Viewer - CAD_Files.SLDASM</span>
+                    </div>
+                    
+                    <div class="sw-model-content">
+                        <div class="sw-model-sidebar">
+                            <h4><i class="fas fa-folder-open"></i> My CAD Projects</h4>
+                            <div class="sw-model-gallery">
+                                <!-- Model Card 1: Arduino Housing (JACK) -->
+                                <div class="sw-model-card active" data-model="models/ArduinoHousing.STL" data-name="JACK - Arduino Housing" data-has-gallery="true">
+                                    <div class="sw-model-card-icon">
+                                        <i class="fas fa-microchip"></i>
+                                    </div>
+                                    <div class="sw-model-card-info">
+                                        <h5>JACK - Arduino Housing</h5>
+                                        <p>Smart thermocouple monitoring system with confidence-based fault detection.</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Model Card 2: Clamp Assembly -->
+                                <div class="sw-model-card" data-model="models/ClampAssembly.STL" data-name="Clamp Assembly" data-has-gallery="false">
+                                    <div class="sw-model-card-icon">
+                                        <i class="fas fa-compress-alt"></i>
+                                    </div>
+                                    <div class="sw-model-card-info">
+                                        <h5>Clamp Assembly</h5>
+                                        <p>Precision clamp assembly engineered for manufacturing applications.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-model-upload">
+                                <label for="stlUpload" class="sw-upload-btn">
+                                    <i class="fas fa-upload"></i> Load Your Own
+                                </label>
+                                <input type="file" id="stlUpload" accept=".stl" hidden>
+                            </div>
+                        </div>
+                        
+                        <div class="sw-viewer-container">
+                            <div class="sw-viewer-model-info" id="modelInfo">
+                                <h3 id="modelTitle">Select a Model</h3>
+                                <p id="modelDesc">Click on a project from the sidebar to view the 3D model.</p>
+                            </div>
+                            <div id="stlViewer" class="sw-stl-viewer"></div>
+                            
+                            <!-- Project Gallery Panel (shows for projects with images) -->
+                            <div class="sw-project-gallery" id="projectGallery">
+                                <div class="sw-gallery-header">
+                                    <h4><i class="fas fa-images"></i> Project Photos</h4>
+                                    <button class="sw-gallery-close" id="closeGallery"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="sw-gallery-content">
+                                    <div class="sw-gallery-main">
+                                        <img id="galleryMainImage" src="images/jack-front.jpg" alt="Project photo">
+                                    </div>
+                                    <div class="sw-gallery-thumbs">
+                                        <img class="sw-thumb active" src="images/jack-front.jpg" alt="Front view" data-full="images/jack-front.jpg">
+                                        <img class="sw-thumb" src="images/jack-top.jpg" alt="Top view" data-full="images/jack-top.jpg">
+                                        <img class="sw-thumb" src="images/jack-side.jpg" alt="Side view" data-full="images/jack-side.jpg">
+                                    </div>
+                                </div>
+                                <div class="sw-gallery-description">
+                                    <h5>JACK - Intelligent Temperature Monitoring System</h5>
+                                    <p>JACK continuously monitors multiple thermocouples and uses a confidence-based algorithm to detect faulty sensors. When a sensor disagrees with others, JACK flags it and reduces its weight in calculations, displaying an asterisk (*) to indicate confidence mode is active. The LED indicator flashes when a sensor is flagged, and confidence levels automatically recover as sensors show reliable readings over time.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="sw-viewer-controls">
+                                <button class="sw-viewer-btn" id="resetView" title="Reset View">
+                                    <i class="fas fa-home"></i>
+                                </button>
+                                <button class="sw-viewer-btn" id="toggleWireframe" title="Toggle Wireframe">
+                                    <i class="fas fa-border-all"></i>
+                                </button>
+                                <button class="sw-viewer-btn active" id="toggleAutoRotate" title="Toggle Auto-Rotate">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <button class="sw-viewer-btn" id="toggleGallery" title="Toggle Project Photos">
+                                    <i class="fas fa-images"></i>
+                                </button>
+                            </div>
+                            <div class="sw-viewer-instructions">
+                                <span><i class="fas fa-mouse"></i> Drag to rotate</span>
+                                <span><i class="fas fa-search-plus"></i> Scroll to zoom</span>
+                                <span><i class="fas fa-arrows-alt"></i> Right-drag to pan</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Skills -->
+            <section id="skills" class="sw-section">
+                <div class="sw-toolbox">
+                    <div class="sw-toolbox-header">
+                        <i class="fas fa-toolbox"></i>
+                        <span>Toolbox - Skills_Library</span>
+                    </div>
+                    
+                    <div class="sw-skills-container">
+                        <!-- Technical Skills -->
+                        <div class="sw-skill-category">
+                            <div class="sw-skill-category-header">
+                                <i class="fas fa-chevron-down"></i>
+                                <i class="fas fa-wrench"></i>
+                                <span>Technical Skills</span>
+                            </div>
+                            <div class="sw-skill-items">
+                                <div class="sw-skill-item"><i class="fas fa-cube"></i> SolidWorks (CAD)</div>
+                                <div class="sw-skill-item"><i class="fas fa-chart-line"></i> MATLAB</div>
+                                <div class="sw-skill-item"><i class="fab fa-python"></i> Python</div>
+                                <div class="sw-skill-item"><i class="fas fa-robot"></i> ROS2</div>
+                                <div class="sw-skill-item"><i class="fas fa-microchip"></i> KiCad</div>
+                                <div class="sw-skill-item"><i class="fas fa-database"></i> LabView</div>
+                                <div class="sw-skill-item"><i class="fas fa-wave-square"></i> Data Acquisition</div>
+                                <div class="sw-skill-item"><i class="fas fa-tachometer-alt"></i> Instrumentation</div>
+                                <div class="sw-skill-item"><i class="fas fa-fire"></i> Thermal Analysis</div>
+                                <div class="sw-skill-item"><i class="fas fa-water"></i> Fluid Systems</div>
+                                <div class="sw-skill-item"><i class="fas fa-microchip"></i> ESP32</div>
+                                <div class="sw-skill-item"><i class="fas fa-satellite-dish"></i> IoT Sensors</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Coursework -->
+                        <div class="sw-skill-category">
+                            <div class="sw-skill-category-header">
+                                <i class="fas fa-chevron-down"></i>
+                                <i class="fas fa-book"></i>
+                                <span>Current Coursework</span>
+                            </div>
+                            <div class="sw-skill-items coursework">
+                                <div class="sw-skill-item"><i class="fas fa-cog"></i> Dynamics & Controls</div>
+                                <div class="sw-skill-item"><i class="fas fa-water"></i> Fluid Mechanics</div>
+                                <div class="sw-skill-item"><i class="fas fa-compress-arrows-alt"></i> Mechanics of Materials</div>
+                                <div class="sw-skill-item"><i class="fas fa-industry"></i> Design for Manufacturing</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Clubs -->
+                        <div class="sw-skill-category">
+                            <div class="sw-skill-category-header">
+                                <i class="fas fa-chevron-down"></i>
+                                <i class="fas fa-users"></i>
+                                <span>Clubs & Organizations</span>
+                            </div>
+                            <div class="sw-clubs-list">
+                                <div class="sw-club-item">
+                                    <div class="sw-club-icon"><i class="fas fa-car-side"></i></div>
+                                    <div class="sw-club-info">
+                                        <span class="sw-club-name">Baja Racing</span>
+                                        <span class="sw-club-status">Present</span>
+                                    </div>
+                                </div>
+                                <div class="sw-club-item">
+                                    <div class="sw-club-icon"><i class="fas fa-satellite"></i></div>
+                                    <div class="sw-club-info">
+                                        <span class="sw-club-name">CubeSAT</span>
+                                        <span class="sw-club-status">Fall 2023</span>
+                                    </div>
+                                </div>
+                                <div class="sw-club-item">
+                                    <div class="sw-club-icon"><i class="fas fa-flag-checkered"></i></div>
+                                    <div class="sw-club-info">
+                                        <span class="sw-club-name">FSAE</span>
+                                        <span class="sw-club-status">Present</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Contact -->
+            <section id="contact" class="sw-section">
+                <div class="sw-mate-panel">
+                    <div class="sw-mate-header">
+                        <i class="fas fa-link"></i>
+                        <span>Add Mate - Contact_Info.SLDPRT</span>
+                    </div>
+                    
+                    <div class="sw-contact-content">
+                        <div class="sw-contact-form-container sw-contact-form-full">
+                            <h3><i class="fas fa-edit"></i> Send Message</h3>
+                            <form class="sw-contact-form" id="contactForm">
+                                <div class="sw-form-group">
+                                    <label for="name">Name:</label>
+                                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                                </div>
+                                <div class="sw-form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                                </div>
+                                <div class="sw-form-group">
+                                    <label for="subject">Subject:</label>
+                                    <input type="text" id="subject" name="subject" placeholder="Enter subject" required>
+                                </div>
+                                <div class="sw-form-group">
+                                    <label for="message">Message:</label>
+                                    <textarea id="message" name="message" placeholder="Enter your message" rows="4" required></textarea>
+                                </div>
+                                <div class="sw-form-actions">
+                                    <button type="submit" class="sw-btn-ok"><i class="fas fa-check"></i> OK</button>
+                                    <button type="reset" class="sw-btn-cancel"><i class="fas fa-times"></i> Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status Bar -->
+            <div class="sw-statusbar">
+                <div class="sw-status-left">
+                    <span class="sw-status-item"><i class="fas fa-check-circle sw-status-ok"></i> Fully Defined</span>
+                    <span class="sw-status-item">Units: MMGS</span>
+                </div>
+                <div class="sw-status-center">
+                    <span>Joe Alapat Portfolio - Mechanical Engineering Student @ LMU</span>
+                </div>
+                <div class="sw-status-right">
+                    <span class="sw-status-item">Components: 4</span>
+                    <span class="sw-status-item">Mates: 12</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Social Icons -->
+    <div class="sw-social-icons">
+        <a href="https://github.com/joealapat" target="_blank" class="sw-social-btn" title="GitHub">
+            <i class="fab fa-github"></i>
+        </a>
+        <a href="https://linkedin.com/in/joealapat" target="_blank" class="sw-social-btn" title="LinkedIn">
+            <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="mailto:jalapat@lion.lmu.edu" class="sw-social-btn" title="Email">
+            <i class="fas fa-envelope"></i>
+        </a>
+        <button class="sw-social-btn" title="Download/Print Resume" onclick="window.print()">
+            <i class="fas fa-download"></i>
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
