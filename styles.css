@@ -913,6 +913,11 @@ body {
     color: var(--sw-accent);
 }
 
+.sw-status-badge.upcoming {
+    background: rgba(255, 165, 0, 0.2);
+    color: #ff9800;
+}
+
 /* ===== Projects Section ===== */
 .sw-design-table {
     background: var(--sw-panel-bg);
