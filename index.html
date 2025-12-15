@@ -53,6 +53,9 @@
     <!-- SolidWorks Title Bar -->
     <header class="sw-titlebar">
         <div class="sw-titlebar-left">
+            <button class="sw-mobile-menu-btn" id="mobileMenuBtn" title="Toggle Sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
             <div class="sw-logo-container">
                 <span class="sw-logo-text">SOLIDWORKS</span>
                 <span class="sw-logo-subtitle">themed portfolio</span>
@@ -81,10 +84,13 @@
         </div>
     </div>
 
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sw-sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- Main Content Area -->
     <div class="sw-main">
         <!-- Sidebar Navigation -->
-        <aside class="sw-featuremanager">
+        <aside class="sw-featuremanager" id="sidebar">
             <div class="sw-tree">
                 <div class="sw-tree-header">
                     <i class="fas fa-folder-open sw-icon-assembly"></i>
@@ -569,10 +575,17 @@
                     
                     <div class="sw-model-content">
                         <div class="sw-model-sidebar">
+                            <div class="sw-sidebar-handle">
+                                <span></span>
+                                <small>Swipe up for models</small>
+                            </div>
                             <h4><i class="fas fa-folder-open"></i> My CAD Projects</h4>
                             <div class="sw-model-gallery">
                                 <!-- Model Card 1: Arduino Housing (JACK) -->
-                                <div class="sw-model-card active" data-model="models/ArduinoHousing.STL" data-name="JACK - Arduino Housing" data-has-gallery="true">
+                                <div class="sw-model-card active" data-model="models/ArduinoHousing.STL" data-name="JACK - Arduino Housing" data-has-gallery="true"
+                                     data-gallery-images="images/jack-front.jpg,images/jack-top.jpg,images/jack-side.jpg"
+                                     data-gallery-title="JACK - Intelligent Temperature Monitoring System"
+                                     data-gallery-desc="JACK continuously monitors multiple thermocouples and uses a confidence-based algorithm to detect faulty sensors. When a sensor disagrees with others, JACK flags it and reduces its weight in calculations, displaying an asterisk (*) to indicate confidence mode is active. The LED indicator flashes when a sensor is flagged, and confidence levels automatically recover as sensors show reliable readings over time.">
                                     <div class="sw-model-card-icon">
                                         <i class="fas fa-microchip"></i>
                                     </div>
@@ -582,14 +595,17 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Model Card 2: Clamp Assembly -->
-                                <div class="sw-model-card" data-model="models/ClampAssembly.STL" data-name="Clamp Assembly" data-has-gallery="false">
+                                <!-- Model Card 2: Spray-Cooling Test Platform -->
+                                <div class="sw-model-card" data-model="models/SprayCooling.STL" data-name="Spray-Cooling Test Platform" data-has-gallery="true"
+                                     data-gallery-images="images/housing-front.jpg,images/housing-side.jpg,images/housing-top.jpg"
+                                     data-gallery-title="Spray-Cooling Test Platform"
+                                     data-gallery-desc="Designed and fabricated a 1/5-scale spray-cooling test platform, integrating water recirculation, precision actuation, and modular experimental housings to evaluate high-heat-flux cooling performance and system reusability.">
                                     <div class="sw-model-card-icon">
-                                        <i class="fas fa-compress-alt"></i>
+                                        <i class="fas fa-spray-can"></i>
                                     </div>
                                     <div class="sw-model-card-info">
-                                        <h5>Clamp Assembly</h5>
-                                        <p>Precision clamp assembly engineered for manufacturing applications.</p>
+                                        <h5>Spray-Cooling Test Platform</h5>
+                                        <p>1/5-scale spray-cooling test platform for high-heat-flux cooling evaluation.</p>
                                     </div>
                                 </div>
                             </div>
@@ -607,7 +623,25 @@
                                 <h3 id="modelTitle">Select a Model</h3>
                                 <p id="modelDesc">Click on a project from the sidebar to view the 3D model.</p>
                             </div>
+                            
+                            <!-- Loading Overlay -->
+                            <div class="sw-loading-overlay" id="loadingOverlay">
+                                <div class="sw-loading-spinner"></div>
+                                <div class="sw-loading-text">Loading 3D Model...</div>
+                                <div class="sw-loading-progress" id="loadingProgress">0%</div>
+                                <div class="sw-loading-progress-bar">
+                                    <div class="sw-loading-progress-fill" id="loadingProgressFill"></div>
+                                </div>
+                            </div>
+                            
                             <div id="stlViewer" class="sw-stl-viewer"></div>
+                            
+                            <!-- Mobile Touch Controls Hint -->
+                            <div class="sw-mobile-controls-hint">
+                                <span><i class="fas fa-hand-pointer"></i> Drag</span>
+                                <span><i class="fas fa-search-plus"></i> Pinch</span>
+                                <span><i class="fas fa-arrows-alt"></i> Two-finger pan</span>
+                            </div>
                             
                             <!-- Project Gallery Panel (shows for projects with images) -->
                             <div class="sw-project-gallery" id="projectGallery">

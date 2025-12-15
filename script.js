@@ -436,48 +436,150 @@ document.addEventListener('keydown', (e) => {
 
 // ===== Mobile Menu Toggle =====
 function initMobileMenu() {
-    // Create mobile menu button
-    const mobileMenuBtn = document.createElement('button');
-    mobileMenuBtn.className = 'sw-mobile-menu-btn';
-    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-    mobileMenuBtn.style.cssText = `
-        display: none;
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        width: 44px;
-        height: 44px;
-        background: var(--sw-accent);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        z-index: 101;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    `;
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
     
-    document.body.appendChild(mobileMenuBtn);
+    if (!mobileMenuBtn || !sidebar) return;
     
-    const featureManager = document.querySelector('.sw-featuremanager');
-    
+    // Toggle sidebar on button click
     mobileMenuBtn.addEventListener('click', () => {
-        featureManager.classList.toggle('open');
+        sidebar.classList.toggle('open');
+        if (overlay) overlay.classList.toggle('visible');
+        
+        // Change icon
+        const icon = mobileMenuBtn.querySelector('i');
+        if (icon) {
+            icon.className = sidebar.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
+        }
     });
     
-    // Show/hide based on screen size
-    function checkMobile() {
-        if (window.innerWidth <= 900) {
-            mobileMenuBtn.style.display = 'flex';
-            mobileMenuBtn.style.alignItems = 'center';
-            mobileMenuBtn.style.justifyContent = 'center';
-        } else {
-            mobileMenuBtn.style.display = 'none';
-            featureManager.classList.remove('open');
-        }
+    // Close sidebar when clicking overlay
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('visible');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon) icon.className = 'fas fa-bars';
+        });
     }
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    // Close sidebar when clicking a navigation item on mobile
+    const navNodes = sidebar.querySelectorAll('.sw-tree-node');
+    navNodes.forEach(node => {
+        node.addEventListener('click', () => {
+            if (window.innerWidth <= 900) {
+                sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('visible');
+                const icon = mobileMenuBtn.querySelector('i');
+                if (icon) icon.className = 'fas fa-bars';
+            }
+        });
+    });
+    
+    // Handle resize - close sidebar if screen becomes large
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 900) {
+            sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('visible');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon) icon.className = 'fas fa-bars';
+        }
+    });
+    
+    // Initialize mobile model sidebar (slide-up panel)
+    initMobileModelSidebar();
+}
+
+// ===== Mobile Model Sidebar (Slide-up Panel) =====
+function initMobileModelSidebar() {
+    const modelSidebar = document.querySelector('.sw-model-sidebar');
+    if (!modelSidebar) return;
+    
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+    
+    // Touch start
+    modelSidebar.addEventListener('touchstart', (e) => {
+        // Only enable drag from top area of sidebar
+        const touch = e.touches[0];
+        const rect = modelSidebar.getBoundingClientRect();
+        
+        // Allow drag from top 50px of the sidebar
+        if (touch.clientY - rect.top < 50) {
+            startY = touch.clientY;
+            isDragging = true;
+            modelSidebar.style.transition = 'none';
+        }
+    }, { passive: true });
+    
+    // Touch move
+    modelSidebar.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        
+        currentY = e.touches[0].clientY;
+        const deltaY = currentY - startY;
+        
+        // Only allow dragging down when expanded, or up when collapsed
+        const isExpanded = modelSidebar.classList.contains('expanded');
+        
+        if (isExpanded && deltaY > 0) {
+            // Dragging down while expanded - collapse
+            const newTranslate = Math.min(deltaY, modelSidebar.offsetHeight - 60);
+            modelSidebar.style.transform = `translateY(${newTranslate}px)`;
+        } else if (!isExpanded && deltaY < 0) {
+            // Dragging up while collapsed - expand
+            const baseTranslate = modelSidebar.offsetHeight - 60;
+            const newTranslate = Math.max(baseTranslate + deltaY, 0);
+            modelSidebar.style.transform = `translateY(${newTranslate}px)`;
+        }
+    }, { passive: true });
+    
+    // Touch end
+    modelSidebar.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        modelSidebar.style.transition = 'transform 0.3s ease';
+        
+        const deltaY = currentY - startY;
+        const threshold = 50;
+        
+        if (Math.abs(deltaY) > threshold) {
+            if (deltaY < 0) {
+                // Swiped up - expand
+                modelSidebar.classList.add('expanded');
+            } else {
+                // Swiped down - collapse
+                modelSidebar.classList.remove('expanded');
+            }
+        }
+        
+        // Reset transform to let CSS handle positioning
+        modelSidebar.style.transform = '';
+    });
+    
+    // Click to toggle (on the handle area)
+    modelSidebar.addEventListener('click', (e) => {
+        // Only toggle if clicking near the top (handle area)
+        const rect = modelSidebar.getBoundingClientRect();
+        if (e.clientY - rect.top < 40) {
+            modelSidebar.classList.toggle('expanded');
+        }
+    });
+    
+    // Collapse when a model is selected
+    const modelCards = document.querySelectorAll('.sw-model-card');
+    modelCards.forEach(card => {
+        card.addEventListener('click', () => {
+            if (window.innerWidth <= 600) {
+                setTimeout(() => {
+                    modelSidebar.classList.remove('expanded');
+                }, 300);
+            }
+        });
+    });
 }
 
 // ===== Smooth Loading Animation =====
@@ -544,15 +646,24 @@ function initSTLViewer() {
     // Renderer setup
     stlRenderer = new THREE.WebGLRenderer({ antialias: true });
     stlRenderer.setSize(container.clientWidth, container.clientHeight);
-    stlRenderer.setPixelRatio(window.devicePixelRatio);
+    stlRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
     container.appendChild(stlRenderer.domElement);
     
-    // Orbit Controls
+    // Orbit Controls with touch support
     stlControls = new THREE.OrbitControls(stlCamera, stlRenderer.domElement);
     stlControls.enableDamping = true;
     stlControls.dampingFactor = 0.05;
     stlControls.autoRotate = true; // Auto-rotate enabled by default
     stlControls.autoRotateSpeed = 2;
+    
+    // Enhanced touch controls
+    stlControls.touches = {
+        ONE: THREE.TOUCH.ROTATE,
+        TWO: THREE.TOUCH.DOLLY_PAN
+    };
+    stlControls.enablePan = true;
+    stlControls.minDistance = 30;
+    stlControls.maxDistance = 300;
     
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -791,6 +902,8 @@ function setupModelGallery() {
             // Show/hide photo gallery based on whether project has images
             if (projectGallery) {
                 if (hasGallery) {
+                    // Update gallery content dynamically
+                    updateGalleryContent(card);
                     projectGallery.classList.add('visible');
                     updateGalleryToggleButton(true);
                 } else {
@@ -820,6 +933,7 @@ function setupModelGallery() {
         
         // Show gallery for first card if it has one
         if (projectGallery && hasGallery) {
+            updateGalleryContent(firstCard);
             projectGallery.classList.add('visible');
             updateGalleryToggleButton(true);
         }
@@ -834,20 +948,7 @@ function setupModelGallery() {
 function setupPhotoGallery() {
     const gallery = document.getElementById('projectGallery');
     const mainImage = document.getElementById('galleryMainImage');
-    const thumbs = document.querySelectorAll('.sw-thumb');
     const closeBtn = document.getElementById('closeGallery');
-    
-    // Thumbnail click handler
-    thumbs.forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            const fullSrc = thumb.dataset.full;
-            if (mainImage && fullSrc) {
-                mainImage.src = fullSrc;
-                thumbs.forEach(t => t.classList.remove('active'));
-                thumb.classList.add('active');
-            }
-        });
-    });
     
     // Close button handler
     if (closeBtn && gallery) {
@@ -863,6 +964,65 @@ function setupPhotoGallery() {
             window.open(mainImage.src, '_blank');
         });
     }
+    
+    // Setup initial thumbnail handlers
+    setupThumbnailHandlers();
+}
+
+function setupThumbnailHandlers() {
+    const mainImage = document.getElementById('galleryMainImage');
+    const thumbs = document.querySelectorAll('.sw-thumb');
+    
+    thumbs.forEach(thumb => {
+        thumb.addEventListener('click', () => {
+            const fullSrc = thumb.dataset.full;
+            if (mainImage && fullSrc) {
+                mainImage.src = fullSrc;
+                thumbs.forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+            }
+        });
+    });
+}
+
+function updateGalleryContent(card) {
+    const galleryImages = card.dataset.galleryImages;
+    const galleryTitle = card.dataset.galleryTitle;
+    const galleryDesc = card.dataset.galleryDesc;
+    
+    if (!galleryImages) return;
+    
+    const images = galleryImages.split(',');
+    const mainImage = document.getElementById('galleryMainImage');
+    const thumbsContainer = document.querySelector('.sw-gallery-thumbs');
+    const titleEl = document.querySelector('.sw-gallery-description h5');
+    const descEl = document.querySelector('.sw-gallery-description p');
+    
+    // Update main image
+    if (mainImage && images[0]) {
+        mainImage.src = images[0];
+    }
+    
+    // Update thumbnails
+    if (thumbsContainer) {
+        thumbsContainer.innerHTML = images.map((img, index) => {
+            const viewName = img.includes('front') ? 'Front view' : 
+                            img.includes('side') ? 'Side view' : 
+                            img.includes('top') ? 'Top view' : 'View ' + (index + 1);
+            return `<img class="sw-thumb ${index === 0 ? 'active' : ''}" src="${img}" alt="${viewName}" data-full="${img}">`;
+        }).join('');
+        
+        // Re-attach click handlers to new thumbnails
+        setupThumbnailHandlers();
+    }
+    
+    // Update title and description
+    if (titleEl && galleryTitle) {
+        titleEl.textContent = galleryTitle;
+    }
+    if (descEl && galleryDesc) {
+        descEl.textContent = galleryDesc;
+    }
 }
 
 function updateGalleryToggleButton(isVisible) {
@@ -877,10 +1037,16 @@ function loadSTLFromURL(url) {
     
     console.log('Loading STL from:', url);
     
+    // Show loading overlay
+    showLoadingOverlay();
+    
     loader.load(
         url,
         function(geometry) {
             console.log('STL loaded successfully');
+            
+            // Hide loading overlay
+            hideLoadingOverlay();
             
             // Get accent color from CSS
             const accentColor = getComputedStyle(document.documentElement)
@@ -923,15 +1089,62 @@ function loadSTLFromURL(url) {
         function(xhr) {
             // Progress callback
             if (xhr.total > 0) {
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                updateLoadingProgress(percent);
+                console.log(percent + '% loaded');
+            } else if (xhr.loaded) {
+                // If total is unknown, show indeterminate progress
+                updateLoadingProgress(-1, xhr.loaded);
             }
         },
         function(error) {
             // Error callback - fall back to sample cube
             console.log('STL file not found or failed to load, showing sample cube:', error);
+            hideLoadingOverlay();
             loadSampleCube();
         }
     );
+}
+
+function showLoadingOverlay() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        overlay.classList.add('visible');
+        updateLoadingProgress(0);
+    }
+}
+
+function hideLoadingOverlay() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        overlay.classList.remove('visible');
+    }
+}
+
+function updateLoadingProgress(percent, bytesLoaded) {
+    const progressText = document.getElementById('loadingProgress');
+    const progressFill = document.getElementById('loadingProgressFill');
+    
+    if (percent === -1 && bytesLoaded) {
+        // Indeterminate progress - show bytes loaded
+        if (progressText) {
+            const kb = Math.round(bytesLoaded / 1024);
+            progressText.textContent = `${kb} KB loaded...`;
+        }
+        if (progressFill) {
+            // Animate indeterminate progress
+            progressFill.style.width = '100%';
+            progressFill.style.animation = 'indeterminate 1.5s ease-in-out infinite';
+        }
+    } else {
+        if (progressText) {
+            progressText.textContent = `${percent}%`;
+        }
+        if (progressFill) {
+            progressFill.style.width = `${percent}%`;
+            progressFill.style.animation = 'none';
+        }
+    }
 }
 
 function updateModelInfo(title, description) {
